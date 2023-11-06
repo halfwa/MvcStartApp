@@ -1,9 +1,13 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using MvcStartApp.Middlewares;
+using MvcStartApp.Models.Db.Contexts;
+using MvcStartApp.Models.Db.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,6 +27,10 @@ namespace MvcStartApp
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            var connection = Configuration.GetConnectionString("DefaultConnection");
+            services.AddDbContext<BlogContext>(options => options.UseSqlServer(connection), ServiceLifetime.Singleton);
+            // регистрация сервиса репозитория для взаимодействия с базой данных
+            services.AddSingleton<IBlogRepository, BlogRepository>();
             services.AddControllersWithViews();
         }
 
@@ -41,6 +49,8 @@ namespace MvcStartApp
             }
             app.UseHttpsRedirection();
             app.UseStaticFiles();
+            // Подключаем логирование с использованием ПО промежуточного слоя
+            app.UseMiddleware<LoggingMiddleware>();
 
             app.UseRouting();
 
@@ -52,6 +62,9 @@ namespace MvcStartApp
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
             });
+
+            // обрабатываем ошибки HTTP
+            app.UseStatusCodePages();
         }
     }
 }
