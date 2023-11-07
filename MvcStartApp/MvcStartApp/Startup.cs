@@ -17,18 +17,19 @@ namespace MvcStartApp
 {
     public class Startup
     {
+        public IConfiguration Configuration { get; }
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
         }
 
-        public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             var connection = Configuration.GetConnectionString("DefaultConnection");
-            services.AddDbContext<BlogContext>(options => options.UseSqlServer(connection), ServiceLifetime.Singleton);
+            services.AddDbContext<BlogContext>(options => 
+                options.UseSqlServer(connection), ServiceLifetime.Singleton);
             // регистрация сервиса репозитория для взаимодействия с базой данных
             services.AddSingleton<IBlogRepository, BlogRepository>();
             services.AddControllersWithViews();
@@ -54,7 +55,7 @@ namespace MvcStartApp
 
             app.UseRouting();
 
-            app.UseAuthorization(); 
+            app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {

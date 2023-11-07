@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MvcStartApp.Models.Db;
 using MvcStartApp.Models.Db.Contexts;
+using System;
 using System.Threading.Tasks;
 
 namespace MvcStartApp.Models.Db.Repositories
@@ -14,9 +15,11 @@ namespace MvcStartApp.Models.Db.Repositories
         }
         public async Task AddUser(User user)
         {
-            // Добавление пользователя
-            var entry = _context.Entry(user);
-            if (entry.State == EntityState.Detached)
+            user.JoinDate = DateTime.Now;
+            user.Id = Guid.NewGuid();
+
+            var entity = _context.Entry(user);
+            if (entity.State == EntityState.Detached)
             {
                 await _context.Users.AddAsync(user);
             }
@@ -24,10 +27,17 @@ namespace MvcStartApp.Models.Db.Repositories
             // Сохранение изменений
             await _context.SaveChangesAsync();
         }
+
+        public async Task<User[]> GetUsers()
+        {
+            // Получим всех активных пользователей
+            return await _context.Users.ToArrayAsync();
+        }
     }
 
     public interface IBlogRepository
     {
         Task AddUser(User user);
+        Task<User[]> GetUsers();
     }
 }
