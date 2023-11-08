@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using MvcStartApp.Models.Db;
 using MvcStartApp.Models.Db.Contexts;
 using System;
 using System.Threading.Tasks;

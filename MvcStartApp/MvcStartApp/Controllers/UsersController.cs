@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using MvcStartApp.Models;
 using MvcStartApp.Models.Db;
 using MvcStartApp.Models.Db.Repositories;
 using System;
@@ -24,20 +25,18 @@ namespace MvcStartApp.Controllers
             return View(users);
         }
 
- 
-        public async Task<IActionResult> Register(string FirstName, string LastName )
+        [HttpGet]
+        public IActionResult Register()
         {
-            var newUser = new User()
-            {
-                FirstName = FirstName,
-                LastName = LastName,
-            };
-            await _repo.AddUser(newUser);
-
-            // Выведем результат
-            Console.WriteLine($"User named {newUser.FirstName} was successfully added on {newUser.JoinDate}");
-
             return View();
+        }
+
+
+        [HttpPost]
+        public async Task<IActionResult> Register(User newUser)
+        {
+            await _repo.AddUser(newUser);
+            return View(newUser);
         }
     }
 }

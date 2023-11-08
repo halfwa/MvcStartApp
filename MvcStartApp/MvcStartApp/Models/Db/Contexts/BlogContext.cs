@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualBasic;
-using MvcStartApp.Models.Db;
 
 namespace MvcStartApp.Models.Db.Contexts
 {
