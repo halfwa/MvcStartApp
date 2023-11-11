@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -11,6 +12,7 @@ using MvcStartApp.Models.Db.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace MvcStartApp
@@ -27,15 +29,14 @@ namespace MvcStartApp
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-
-            // регистрация сервиса репозитория для взаимодействия с базой данных
-            services.AddSingleton<IBlogRepository, BlogRepository>();
-            services.AddSingleton<IRequestRepository, RequestRepository>();
-
             var connection = Configuration.GetConnectionString("DefaultConnection");
             services.AddDbContext<BlogContext>(options => 
                 options.UseSqlServer(connection), ServiceLifetime.Singleton);
 
+            // регистрация сервиса репозитория для взаимодействия с базой данных
+            services.AddSingleton<IBlogRepository, BlogRepository>();
+            services.AddSingleton<IRequestRepository, RequestRepository>();
+                    
             services.AddControllersWithViews();
         }
 
@@ -66,7 +67,7 @@ namespace MvcStartApp
             {
                 endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "{controller=Home}/{action=Index}/{id?}");
+                    pattern: "{controller=Home}/{action=Index}/{id?}");    
             });
 
             // обрабатываем ошибки HTTP

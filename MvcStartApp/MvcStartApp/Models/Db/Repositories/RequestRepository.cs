@@ -32,9 +32,9 @@ namespace MvcStartApp.Models.Db.Repositories
         }
     }
 
-    interface IRequestRepository
+    public interface IRequestRepository
     {
         Task AddRequestAsync(Request request);
-        Task<Request[]> GetRequests();
+        Task<Request[]> GetRequestsAsync();
     }
 }
