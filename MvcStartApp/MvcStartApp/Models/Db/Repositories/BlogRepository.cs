@@ -15,10 +15,10 @@ namespace MvcStartApp.Models.Db.Repositories
         public async Task AddUser(User user)
         {
             user.JoinDate = DateTime.Now;
-            user.Id = Guid.NewGuid();
+            user.Id = Guid.NewGuid();           
 
-            var entity = _context.Entry(user);
-            if (entity.State == EntityState.Detached)
+            var entry = _context.Entry(user);   
+            if (entry.State == EntityState.Detached)
             {
                 await _context.Users.AddAsync(user);
             }

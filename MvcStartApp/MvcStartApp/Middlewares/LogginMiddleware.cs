@@ -2,13 +2,15 @@
 using System.IO;
 using System.Threading.Tasks;
 using System;
+using MvcStartApp.Models.Db.Repositories;
+using Microsoft.AspNetCore.Http.Extensions;
+using MvcStartApp.Models;
 
 namespace MvcStartApp.Middlewares
 {
     public class LoggingMiddleware
     {
         private readonly RequestDelegate _next;
-
         /// <summary>
         ///  Middleware-компонент должен иметь конструктор, принимающий RequestDelegate
         /// </summary>
@@ -17,10 +19,11 @@ namespace MvcStartApp.Middlewares
         /// <summary>
         ///  Необходимо реализовать метод Invoke  или InvokeAsync
         /// </summary>
-        public async Task InvokeAsync(HttpContext context)
+        public async Task InvokeAsync(HttpContext context, IRequestRepository repo)
         {
             LogConsole(context);
             await LogFile(context);
+            await LogDb(context, repo);
 
             // Передача запроса далее по конвейеру
             await _next.Invoke(context);
@@ -44,5 +47,13 @@ namespace MvcStartApp.Middlewares
             await File.AppendAllTextAsync(logFilePath, logMessage);
         }
 
+        private async Task LogDb(HttpContext context, IRequestRepository repo) 
+        {
+            var newRequest = new Request()
+            {
+                Url = context.Request.GetDisplayUrl()
+            }; 
+            await repo.AddRequestAsync(newRequest);
+        }
     }
 }
